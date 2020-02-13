@@ -182,7 +182,9 @@ for step in trange(args.num_steps):
         results_dict['policy_losses'].append((step, policy_loss))
 
         vis_plot(vis, results_dict)
-    print("all time",int(time.time()-time_start))
+        print("all time",int(time.time()-time_start))
+        print("step",step)
+
 
 
 with open(base_dir + '/results', 'wb') as f:
