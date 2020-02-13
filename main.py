@@ -1,5 +1,5 @@
 import argparse
-import os
+import os,time
 import gym
 import numpy as np
 import pickle
@@ -25,7 +25,7 @@ parser.add_argument('--noise_scale', type=float, default=0.2, metavar='G', help=
 parser.add_argument('--batch_size', type=int, default=64, metavar='N', help='batch size (default: 64)')
 parser.add_argument('--num_epochs', type=int, default=None, metavar='N', help='number of epochs (default: None)')
 parser.add_argument('--num_epochs_cycles', type=int, default=20, metavar='N')
-parser.add_argument('--num_steps', type=int, default=1000000, metavar='N',
+parser.add_argument('--num_steps', type=int, default=100000, metavar='N',
                     help='number of training steps (default: 1000000)')
 parser.add_argument('--start_timesteps', type=int, default=10000, metavar='N')
 parser.add_argument('--eval_freq', type=int, default=5000, metavar='N')
@@ -109,6 +109,7 @@ else:
     vis = None
 
 episode_timesteps = 0
+
 for step in trange(args.num_steps):
     with torch.no_grad():
         if step % args.eval_freq == 0:
@@ -168,8 +169,11 @@ for step in trange(args.num_steps):
             reset_noise(noise)
 
     if len(agent.memory) > args.batch_size and step % args.train_frequency == 0:
+        time_start = time.time()
         value_loss, policy_loss = agent.update_parameters(batch_size=args.batch_size,
                                                           number_of_iterations=args.train_frequency)
+
+        print("update_parameters time",int(time.time()-time_start))
 
         results_dict['value_losses'].append((step, value_loss))
         results_dict['policy_losses'].append((step, policy_loss))
