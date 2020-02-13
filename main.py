@@ -183,9 +183,8 @@ for step in trange(args.num_steps):
 
         vis_plot(vis, results_dict)
         print("all time",int(time.time()-time_start))
-        print("step",step)
 
-
+print("final time",int(time.time()-time_start))
 
 with open(base_dir + '/results', 'wb') as f:
     pickle.dump(results_dict, f)
