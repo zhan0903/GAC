@@ -1,6 +1,6 @@
 import torch
 from torch.autograd import Variable
-import os
+import os,time
 import numpy as np
 from replay_memory import ReplayMemory, Transition
 
@@ -87,9 +87,12 @@ class Policy:
             mask_batch = Variable(torch.stack(batch.mask)).to(self.device).unsqueeze(1)
             next_state_batch = Variable(torch.stack(batch.next_state)).to(self.device)
 
+            # time_update_critic_start = time.time()
             value_loss = self.update_critic(state_batch, action_batch, reward_batch, mask_batch, next_state_batch)
+            # print("time update critic",int(time.time()-time_update_critic_start))
             value_losses.append(value_loss)
 
+            
             policy_loss = self.update_actor(state_batch, action_batch)
             policy_losses.append(policy_loss)
             self.soft_update()

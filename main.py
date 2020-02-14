@@ -110,6 +110,7 @@ else:
 
 episode_timesteps = 0
 time_start = time.time()
+all_update_parameters_time = 0
 
 for step in trange(args.num_steps):
     # time_explore_start = time.time()
@@ -173,10 +174,13 @@ for step in trange(args.num_steps):
     
     if len(agent.memory) > args.batch_size and step % args.train_frequency == 0:
         update_parameters_start = time.time()
+        
         value_loss, policy_loss = agent.update_parameters(batch_size=args.batch_size,
                                                           number_of_iterations=args.train_frequency)
 
-        print("update_parameters time",int(time.time()-update_parameters_start))
+        all_update_parameters_time += int(time.time()-update_parameters_start)
+
+        print("all_update_parameters_time",all_update_parameters_time)
 
         results_dict['value_losses'].append((step, value_loss))
         results_dict['policy_losses'].append((step, policy_loss))
