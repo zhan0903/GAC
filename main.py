@@ -111,9 +111,10 @@ else:
 episode_timesteps = 0
 time_start = time.time()
 all_update_parameters_time = 0
+all_explore_time = 0
 
 for step in trange(args.num_steps):
-    # time_explore_start = time.time()
+    time_explore_start = time.time()
     with torch.no_grad():
         if step % args.eval_freq == 0:
             eval_reward = 0
@@ -170,7 +171,8 @@ for step in trange(args.num_steps):
             episode_timesteps = 0
             state = agent.Tensor([env.reset()])
             reset_noise(noise)
-    # print("time_explore",int(time.time()-time_explore_start))
+    
+    all_explore_time += int(time.time()-time_explore_start)
     
     if len(agent.memory) > args.batch_size and step % args.train_frequency == 0:
         update_parameters_start = time.time()
@@ -180,13 +182,12 @@ for step in trange(args.num_steps):
 
         all_update_parameters_time += int(time.time()-update_parameters_start)
 
-        print("all_update_parameters_time",all_update_parameters_time)
-
         results_dict['value_losses'].append((step, value_loss))
         results_dict['policy_losses'].append((step, policy_loss))
 
         vis_plot(vis, results_dict)
-        print("all time",int(time.time()-time_start))
+
+        print("all time",int(time.time()-time_start),"all explore time",all_explore_time,"all_update_parameters_time",all_update_parameters_time)
 
 print("final time",int(time.time()-time_start))
 
